@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: login-service
+          uri: lb://login-service # Cambia al puerto correcto
+          predicates:
+            - Path=/hola/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/backend-digital-money
+  main:
+    web-application-type: reactive
+
+server:
+  port: 8081
