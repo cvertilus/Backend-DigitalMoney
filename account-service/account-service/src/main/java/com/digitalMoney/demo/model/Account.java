@@ -7,12 +7,12 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "accounts")
 public class Account {
-    public Long getAccountId() {
-        return accountId;
+    public Long getId() {
+        return id;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUserId() {
@@ -57,7 +57,7 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountId;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String userId;

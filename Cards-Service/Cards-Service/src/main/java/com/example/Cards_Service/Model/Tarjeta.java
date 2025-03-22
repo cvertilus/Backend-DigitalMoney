@@ -16,7 +16,7 @@ public class Tarjeta {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(nullable = false, updatable = false, unique = true)
-    private String cardId;
+    private String id;
 
     @Column(nullable = false)
     private String expiration;
