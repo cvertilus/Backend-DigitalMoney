@@ -62,16 +62,16 @@ public class Account {
     @Column(nullable = false, unique = true)
     private String userId;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private int balance;
 
-    @Column(nullable = false,unique = true)
-    private  String cvu;
+    @Column(nullable = false, unique = true)
+    private String cvu;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String alias;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
     public Account(String userId, int balance, String cvu, String alias, String name) {
