@@ -7,12 +7,12 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.w3c.dom.stylesheets.LinkStyle;
+import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public class KeycloakRepository implements UserRepsository{
 
     @Autowired
