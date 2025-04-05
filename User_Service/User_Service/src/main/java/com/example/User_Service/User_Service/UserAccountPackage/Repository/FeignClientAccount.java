@@ -2,12 +2,10 @@ package com.example.User_Service.User_Service.UserAccountPackage.Repository;
 
 import com.example.User_Service.User_Service.Configuration.FeignClientConfiguration;
 import com.example.User_Service.User_Service.UserAccountPackage.Model.Account;
+import com.example.User_Service.User_Service.UserActivityPackage.Model.Transfer;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
         name = "account-service",
@@ -21,4 +19,7 @@ public interface FeignClientAccount {
 
     @RequestMapping(method = RequestMethod.PATCH , value = "/accounts/{accountId}")
     ResponseEntity <Account> updateAccount (@PathVariable ("accountId") Long accuntId, @RequestBody Account account);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/accounts/transfer")
+    ResponseEntity <Account> transferActivity (@RequestBody Transfer transfer);
 }
