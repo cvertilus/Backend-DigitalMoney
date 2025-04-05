@@ -17,25 +17,19 @@ public class ActivityController {
     private ActivityService activityService;
 
     @GetMapping("/{activityId}")
-    public ResponseEntity<?> getActivitiesById(@PathVariable("activityId") String activityId){
-        try {
+    public ResponseEntity<Activity> getActivitiesById(@PathVariable("activityId") String activityId){
             Activity activity = activityService.getActivityById(activityId);
             return ResponseEntity.ok(activity);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existe el Activity con ese Id"+ activityId);
-        }
     }
 
     @GetMapping()
     public ResponseEntity<List<Activity>> getActivityByUserId(@RequestParam("userId") String userId){
         List<Activity> activities = activityService.getActivityByUserId(userId);
-        if (activities.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(activities);
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<?> createActivity(@RequestBody ActivityRequest activityRequest,@PathVariable("userId") String userId ){
+    public ResponseEntity<Activity> createActivity(@RequestBody ActivityRequest activityRequest,@PathVariable("userId") String userId ){
         return ResponseEntity.ok(activityService.saveActivity(userId,activityRequest));
     }
 }

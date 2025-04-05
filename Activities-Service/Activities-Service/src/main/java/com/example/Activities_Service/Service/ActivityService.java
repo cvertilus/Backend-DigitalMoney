@@ -3,6 +3,7 @@ package com.example.Activities_Service.Service;
 import com.example.Activities_Service.Model.Activity;
 import com.example.Activities_Service.Model.ActivityRequest;
 import com.example.Activities_Service.Repository.ActivityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +30,10 @@ public class ActivityService {
     }
 
     public Activity getActivityById(String id){
-        return activityRepository.findById(id).orElseThrow(() -> new RuntimeException("El Actividad no exite "+id));
+        return activityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("El Actividad no exite "+id));
     }
     public List<Activity> getActivityByUserId(String userId){
+
         return activityRepository.findAllByUserId(userId);
     }
 
