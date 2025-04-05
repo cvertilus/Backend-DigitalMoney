@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/cards")
@@ -17,38 +19,27 @@ public class CardsController {
     private CardsService cardsService;
 
     @GetMapping()
-    public ResponseEntity<?> getCardByUserId(@RequestParam("userId") String userId){
-        try {
-            return ResponseEntity.ok(cardsService.getUserCardByIdCard(userId));
-        }catch (RuntimeException r){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(r.getMessage());
-        }
+    public ResponseEntity<List<Tarjeta>> getCardByUserId(@RequestParam("userId") String userId){
+        List<Tarjeta> tarjetas = cardsService.getUserCardByUserId(userId);
+        return ResponseEntity.ok(tarjetas);
     }
+
     @GetMapping("/{cardId}")
     public  ResponseEntity<?> getCardByCardId (@PathVariable("cardId") String cardId){
-        try{
-            return ResponseEntity.ok(cardsService.getUserCardByIdCard(cardId));
-        } catch (RuntimeException r) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(r.getMessage());
-        }
+        Tarjeta tarjeta = cardsService.getUserCardByIdCard(cardId);
+        return ResponseEntity.ok(tarjeta);
     }
 
     @DeleteMapping("/{cardId}")
     public ResponseEntity<?> deleteCardByCardId(@PathVariable("cardId") String cardId){
-        try {
-            return ResponseEntity.ok(cardsService.deleteUserCardByIdcard(cardId));
-        } catch (RuntimeException r) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(r.getMessage());
-        }
+        Tarjeta tarjeta = cardsService.deleteUserCardByIdcard(cardId);
+        return ResponseEntity.ok(tarjeta);
     }
 
     @PostMapping()
     public ResponseEntity<?> createCard(@RequestParam("userId") String userId, @RequestBody CardRequest cardRequest){
-        try {
             return ResponseEntity.ok(cardsService.createCards(userId,cardRequest));
-        } catch (RuntimeException e) {
-          return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
     }
 
 
