@@ -1,22 +1,11 @@
 spring:
   cloud:
     gateway:
-      default-filters:
-        - TokenRelay
       routes:
         - id: login-service
           uri: lb://login-service # Cambia al puerto correcto
           predicates:
-            - Path=/login/**
-
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/users/**
-          filters:
-            - TokenRelay
-
-
+            - Path=/hola/**
   security:
     oauth2:
       resourceserver:
