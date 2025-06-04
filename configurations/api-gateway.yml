@@ -1,14 +1,19 @@
+server:
+  port: 8081
+
 spring:
+  main:
+    web-application-type: reactive
+
   cloud:
     gateway:
       default-filters:
         - TokenRelay
       routes:
         - id: login-service
-          uri: lb://login-service # Cambia al puerto correcto
+          uri: lb://login-service
           predicates:
             - Path=/login/**
-
         - id: user-service
           uri: lb://user-service
           predicates:
@@ -20,13 +25,18 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloack:8080/realms/backend-digital-money
-  main:
-    web-application-type: reactive
-server:
-  port: 8081
+          issuer-uri: http://keycloak:8080/realms/backend-digital-money
 
 eureka:
-   client:
+  client:
     service-url:
       defaultZone: http://eureka-server:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
