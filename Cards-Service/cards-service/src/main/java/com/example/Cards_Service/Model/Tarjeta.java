@@ -1,5 +1,6 @@
 package com.example.Cards_Service.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,6 +12,10 @@ import lombok.Builder;
 @Entity
 @Table(name="tarjetas")
 @Builder(toBuilder = true)
+@Schema(
+        description = "Tarjeta Model",
+        title = "Tarjeta"
+)
 public class Tarjeta {
     @Id
     @GeneratedValue(generator = "UUID")

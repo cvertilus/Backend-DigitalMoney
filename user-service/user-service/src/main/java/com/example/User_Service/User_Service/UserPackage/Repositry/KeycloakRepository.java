@@ -19,10 +19,7 @@ public class KeycloakRepository implements UserRepsository{
     private Keycloak keycloak;
     @Value("${app.keycloak.realm}")
     String realm;
-    @Value("${app.keycloak.clientid}")
-    String clientid;
-    @Value("${app.keycloak.clientsecret}")
-    String clientsecret;
+
 
 
     @Override
@@ -73,9 +70,8 @@ public class KeycloakRepository implements UserRepsository{
     }
 
     @Override
-    public String logout(String token) {
-
-        return "";
+    public void logout(String userId) {
+        keycloak.realm(realm).users().get(userId).logout();
     }
 
     private CredentialRepresentation nuevaContraseña  (String contraseña){

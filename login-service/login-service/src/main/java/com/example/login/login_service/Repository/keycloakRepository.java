@@ -1,6 +1,7 @@
 package com.example.login.login_service.Repository;
 
 import com.example.login.login_service.model.*;
+import feign.FeignException;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,11 +33,14 @@ public class keycloakRepository implements userRepository {
     @Value("${app.keycloak.clientsecret}")
     String clientsecret;
 
-    private final String keycloakToken = "http://localhost:8080/realms/backend-digital-money/protocol/openid-connect/token";
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
     private AccountFeignClient accountFeignClient;
+
+    @Autowired
+    private KeycloakFeign keycloakFeign;
 
 
     @Override
@@ -45,60 +51,41 @@ public class keycloakRepository implements userRepository {
 
     @Override
     public ResponseEntity<Map<String, Object>> loginUser(String email, String password) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        if (!ExisteUsername(email)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario inexistente", "status", 404));
+        }
 
-        if(!ExisteUsername(email)) return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", "Usuario inexistente", "status", 404));
+        // Preparar el formulario
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "password");
+        formData.add("client_id", clientid);
+        formData.add("client_secret", clientsecret);
+        formData.add("username", email);
+        formData.add("password", password);
 
-        String  nameUSer = findByUsername(email).get(0).getUsername();
-
-        Map<String, String> body = new HashMap<>();
-        body.put("grant_type", "password");
-        body.put("client_id", clientid);
-        body.put("client_secret", clientsecret);
-        body.put("username", email);
-        body.put("password", password);
-
-        StringBuilder requestData = new StringBuilder();
-        body.forEach((key, value) -> requestData.append(key).append("=").append(value).append("&"));
-        requestData.setLength(requestData.length() - 1); // Eliminar el último "&"
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestData.toString(), headers);
-        // Realizar la solicitud y manejar errores
         try {
-            // Realizar la solicitud HTTP al servidor de Keycloak
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    keycloakToken, HttpMethod.POST, requestEntity, Map.class);
+            Map<String, Object> response = keycloakFeign.getToken(formData);
 
-            // ✅ Si la autenticación es exitosa
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Map<String, Object> responseBody = new HashMap<>();
-                responseBody.put("accessToken", response.getBody().get("access_token"));
-                responseBody.put("message", "Autenticación exitosa");
-                return ResponseEntity.ok(responseBody);
-            }
-
-            return ResponseEntity.status(response.getStatusCode())
-                    .body(Map.of("error", "Error en autenticación", "status", response.getStatusCode().value()));
-
-        } catch (HttpClientErrorException e) {
-            HttpStatus status = (HttpStatus) e.getStatusCode();
-
-
-            if (status == HttpStatus.UNAUTHORIZED) {
+            if (response.containsKey("access_token")) {
+                Map<String, Object> body = new HashMap<>();
+                body.put("accessToken", response.get("access_token"));
+                body.put("message", "Autenticación exitosa");
+                return ResponseEntity.ok(body);
+            } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "Contraseña incorrecta", "status", 400));
+                        .body(Map.of("error", "Respuesta sin token", "status", 400));
             }
 
-            return ResponseEntity.status(status)
-                    .body(Map.of("error", "Error HTTP inesperado", "status", status.value()));
+        } catch (FeignException.Unauthorized e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Contraseña incorrecta", "status", 400));
+
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error interno del servidor", "status", 500));
         }
-
     }
 
     @Override
@@ -132,16 +119,11 @@ public class keycloakRepository implements userRepository {
                 String id = location.substring(location.lastIndexOf("/")+1);
                 user.setId(id);
                 ResponseEntity<Map<String, Object>> login =  loginUser(createUser.getEmail(),createUser.getPassword());
+
                 if(login.getStatusCode() == HttpStatus.OK){
-                    String accessToken = login.getBody().get("accessToken").toString();
+                    String accessToken = login.getBody().get("access_token").toString();
                     Account accountRequest = createAccountRequest(user);
-                    ResponseEntity<?> account = accountFeignClient.createAccount(accountRequest,"Bearer " + accessToken);
-
-                    if(account.getStatusCode() == HttpStatus.OK){
-                        CreateUserDto userDto = new CreateUserDto(createUser.getFirstname(),createUser.getLastname(),createUser.getDni(),createUser.getEmail(),createUser.getPhone(),accountRequest.getCvu(),accountRequest.getAlias(),accountRequest.getUserId());
-                        return ResponseEntity.ok().body(Map.of("user",userDto,"acccess_token",accessToken));
-
-                    }else return (ResponseEntity<Map<String, Object>>) account;
+                   return crearAccount(accountRequest, accessToken, createUser, id);
                 }
             }
 
@@ -202,6 +184,29 @@ public class keycloakRepository implements userRepository {
         account.setUserId(user.getId());
         return  account;
     }
+    private void deleteUSer(String userId) {
+            keycloak.realm(realm).users().get(userId).remove();
+
+    }
+
+    private ResponseEntity<Map<String, Object>> crearAccount(Account accountRequest, String accessToken, CreateUser createUser, String id) {
+        
+        try{
+
+            ResponseEntity<?> account = accountFeignClient.createAccount(accountRequest,"Bearer " + accessToken);
+            CreateUserDto userDto = new CreateUserDto(createUser.getFirstname(),createUser.getLastname(),createUser.getDni(),createUser.getEmail(),createUser.getPhone(),accountRequest.getCvu(),accountRequest.getAlias(),accountRequest.getUserId());
+            return ResponseEntity.ok().body(Map.of("user",userDto,"acccess_token",accessToken));
+
+        }catch (HttpClientErrorException e){
+            deleteUSer(id);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Error","Error al crear la cuenta , AccountService no esta funcionando","status",404));
+
+        }
+
+       
+    }
+        
+
 
 }
 

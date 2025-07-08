@@ -1,5 +1,9 @@
 package com.example.login.login_service.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+        description = "Model representing the data required for user login.")
 public class LoginUserBody {
     private String username;
     private String password;
