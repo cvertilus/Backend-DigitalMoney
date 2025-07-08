@@ -18,7 +18,8 @@ public class SecurityConfig {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/hola").permitAll()
+                        .pathMatchers("/actuator/**").permitAll()
+                        .pathMatchers("/login").permitAll()
                         .anyExchange()
                         .authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
