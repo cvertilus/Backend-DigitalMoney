@@ -1,5 +1,6 @@
 package com.example.User_Service.User_Service.UserCardPackage.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
+@Schema(
+        description = "Card model representing a user's card information. " +
+                "Contains details such as card number, expiration date, cardholder name, and CVC.")
 public class Cards {
     private String id;
     private String expiration;

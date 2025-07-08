@@ -13,5 +13,4 @@ public interface AccountFeignClient {
 
      @RequestMapping(method =RequestMethod.POST,value = "/accounts")
      ResponseEntity<?> createAccount(@RequestBody Account account, @RequestHeader("Authorization") String token);
-
 }

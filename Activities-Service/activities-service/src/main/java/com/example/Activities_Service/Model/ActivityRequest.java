@@ -1,5 +1,6 @@
 package com.example.Activities_Service.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 
@@ -7,6 +8,9 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(
+        description = "Activity Request Model",
+        title = "Activity Request")
 public class ActivityRequest {
 
     private Long amount;

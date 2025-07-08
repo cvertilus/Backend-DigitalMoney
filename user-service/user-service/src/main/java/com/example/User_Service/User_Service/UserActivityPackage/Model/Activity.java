@@ -1,5 +1,6 @@
 package com.example.User_Service.User_Service.UserActivityPackage.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+@Schema(
+        description = "Activity model representing a user's activity in the system. " +
+                "Contains details such as activity name, amount, date, user ID, origin, destination, type, and description.")
 
 public class Activity {
     private String id;

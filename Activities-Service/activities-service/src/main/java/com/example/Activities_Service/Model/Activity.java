@@ -1,6 +1,7 @@
 package com.example.Activities_Service.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,6 +17,10 @@ import java.time.OffsetDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
+@Schema(
+        description = "Represents an activity in the system, such as a transaction or event.",
+        title = "Activity",
+        type = "object")
 public class Activity {
     @Id
     @GeneratedValue(generator = "UUID")
