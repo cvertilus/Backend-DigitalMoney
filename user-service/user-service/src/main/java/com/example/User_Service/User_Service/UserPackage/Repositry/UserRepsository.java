@@ -8,5 +8,5 @@ public interface UserRepsository {
     User getUserById(String id);
     User getUserByUsername(String username);
     String cambioDeContrasena(String contraseña,String userId);
-    String logout(String token);
+    void logout(String  userId);
 }

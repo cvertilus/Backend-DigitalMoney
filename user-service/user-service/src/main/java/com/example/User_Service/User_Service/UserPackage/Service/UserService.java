@@ -26,4 +26,8 @@ public class UserService {
     public String updateContraseña (String contraseña ,String id){
         return userRepsository.cambioDeContrasena(contraseña,id);
     }
+
+    public void logout (String userId){
+        userRepsository.logout(userId);
+    }
 }
