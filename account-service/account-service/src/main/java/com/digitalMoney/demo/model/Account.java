@@ -1,11 +1,17 @@
 package com.digitalMoney.demo.model;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 
 @Entity
 @Table(name = "accounts")
+@Schema(
+        description = "Represents a user's account in the system.",
+        title = "Account",
+        requiredProperties = {"userId", "balance", "cvu", "alias", "name"}
+)
 public class Account {
     public Long getId() {
         return id;
