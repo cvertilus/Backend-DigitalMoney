@@ -10,7 +10,6 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="tarjetas")
 @Builder(toBuilder = true)
 @Schema(
         description = "Tarjeta Model",
@@ -18,10 +17,10 @@ import lombok.Builder;
 )
 public class Tarjeta {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(nullable = false, updatable = false, unique = true)
-    private String id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "card_id", nullable = false, updatable = false)
+    private String cardId;
 
     @Column(nullable = false)
     private String expiration;
@@ -38,5 +37,12 @@ public class Tarjeta {
     @Column(nullable = false)
     private String userId;
 
+    public Tarjeta(String expiration, String number, String name, String cvc, String userId) {
+        this.expiration = expiration;
+        this.number = number;
+        this.name = name;
+        this.cvc = cvc;
+        this.userId = userId;
+    }
 }
 

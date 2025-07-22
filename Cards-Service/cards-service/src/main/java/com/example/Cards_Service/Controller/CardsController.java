@@ -25,7 +25,6 @@ public class CardsController {
             description = "Retrieve a list of cards associated with a specific userId. If no cards are found, an empty list will be returned."
     )
     @ApiResponse(responseCode = "200", description = "Cards retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "No cards found for the user")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping()
     public ResponseEntity<List<Tarjeta>> getCardByUserId(@RequestParam("userId") String userId){
@@ -68,9 +67,6 @@ public class CardsController {
             return ResponseEntity.ok(cardsService.createCards(userId,cardRequest));
 
     }
-
-
-
 
 
 }

@@ -10,21 +10,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
-@EnableWebSecurity
-@Profile("!test")
-public class SecurityConfig {
+@Profile("test")
+public class NoSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(exchange -> exchange
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/Swagger-ui.html", "/v3/api-docs/**",
-                                "swagger-ui/**",
-                                "/favicon.ico").permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
         return  http.build();
     }
 }
