@@ -14,12 +14,10 @@ spring:
           uri: lb://login-service
           predicates:
             - Path=/login/**
-            
         - id: login-service
           uri: lb://login-service
           predicates:
-             - path=/register/**
-             
+             - Path=/register/**
         - id: user-service
           uri: lb://user-service
           predicates:
