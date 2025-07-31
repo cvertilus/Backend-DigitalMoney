@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -23,10 +25,10 @@ import java.time.OffsetDateTime;
         type = "object")
 public class Activity {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(nullable = false, updatable = false, unique = true)
-    private String id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "activity_id", nullable = false, updatable = false)
+    private String activityId;
 
     @Column(nullable = false)
     private String name;
@@ -34,8 +36,8 @@ public class Activity {
     @Column(nullable = false)
     private double amount;
 
-    @Column(nullable = false, updatable = false,insertable = false)
-    private OffsetDateTime date;
+   @CreationTimestamp
+    private LocalDateTime date;
 
     @Column(nullable = false)
     private String userId;
