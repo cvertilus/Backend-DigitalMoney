@@ -10,7 +10,7 @@ import java.util.List;
 
 @FeignClient (
         name = "cards-service",
-        url = "http://localhost:8085",
+
         configuration = FeignClientConfiguration.class
 )
 public interface FeingClientCards {

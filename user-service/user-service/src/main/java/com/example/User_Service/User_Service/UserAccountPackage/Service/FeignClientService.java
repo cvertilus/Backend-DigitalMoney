@@ -1,7 +1,9 @@
 package com.example.User_Service.User_Service.UserAccountPackage.Service;
 
 import com.example.User_Service.User_Service.UserAccountPackage.Model.Account;
+import com.example.User_Service.User_Service.UserAccountPackage.Model.TransferenciaRequest;
 import com.example.User_Service.User_Service.UserAccountPackage.Repository.FeignClientAccount;
+import com.example.User_Service.User_Service.UserActivityPackage.Model.ActivityRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,4 +20,10 @@ public class FeignClientService {
     public ResponseEntity<Account> updateAccount (Long accountId, Account account){
         return feignClientAccount.updateAccount(accountId,account);
     }
+
+    public ResponseEntity<String> crearTransfernecia (String userId, TransferenciaRequest transferenciaRequest){
+        return feignClientAccount.transferActivity(transferenciaRequest);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.User_Service.User_Service.UserActivityPackage.Controller;
 
 import com.example.User_Service.User_Service.UserActivityPackage.Model.Activity;
+import com.example.User_Service.User_Service.UserActivityPackage.Model.ActivityRequest;
 import com.example.User_Service.User_Service.UserActivityPackage.Service.FeignActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,6 +37,7 @@ public class FeignAcivityController {
     @ApiResponse(responseCode = "200", description = "Activities retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
+    @GetMapping("/{userId}/activities")
     public ResponseEntity<List<Activity>> getUSerActivity (@PathVariable("userId") String userId){
         return feignActivityService.getUserActivity(userId);
     }
@@ -47,8 +49,8 @@ public class FeignAcivityController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping("/{userId}/activities")
-    public ResponseEntity<Activity> createActivity (@PathVariable("userId") String userId, @RequestBody Activity activity){
-        return feignActivityService.guardarActivity(userId, activity);
+    public ResponseEntity<Activity> createActivity (@PathVariable("userId") String userId, @RequestBody ActivityRequest activityRequest){
+        return feignActivityService.crearActivity(userId, activityRequest);
     }
 
 }

@@ -9,7 +9,7 @@ import lombok.Data;
                 "It includes details such as userId, balance, cvu, alias, and name."
 )
 public class Account {
-       private Long id;
+       private Long accountId;
        private String userId;
        private Long balance;
        private String cvu;

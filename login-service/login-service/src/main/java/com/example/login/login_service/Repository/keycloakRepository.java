@@ -69,7 +69,7 @@ public class keycloakRepository implements userRepository {
 
             if (response.containsKey("access_token")) {
                 Map<String, Object> body = new HashMap<>();
-                body.put("accessToken", response.get("access_token"));
+                body.put("access_token", response.get("access_token"));
                 body.put("message", "Autenticación exitosa");
                 return ResponseEntity.ok(body);
             } else {
@@ -119,21 +119,22 @@ public class keycloakRepository implements userRepository {
                 String id = location.substring(location.lastIndexOf("/")+1);
                 user.setId(id);
                 ResponseEntity<Map<String, Object>> login =  loginUser(createUser.getEmail(),createUser.getPassword());
-
                 if(login.getStatusCode() == HttpStatus.OK){
                     String accessToken = login.getBody().get("access_token").toString();
-                    Account accountRequest = createAccountRequest(user);
+                    AccountRequest accountRequest = createAccountRequest(user);
                    return crearAccount(accountRequest, accessToken, createUser, id);
                 }
             }
 
         }catch (HttpClientErrorException e){
+            deleteUSer(user.getId());
             HttpStatus status = (HttpStatus) e.getStatusCode();
             if (status == HttpStatus.BAD_REQUEST) return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Message","Error en crear el usuario","status",404));
 
         }catch (Exception e){
+            deleteUSer(user.getId());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error interno del servidor", "status", 500));
+                    .body(Map.of(e.getMessage(), "Error interno del servidor", "status", 500));
         }
         return null;
     }
@@ -171,30 +172,25 @@ public class keycloakRepository implements userRepository {
         return keycloak.realm(realm).users().create(userRepresentation);
     }
 
-    private Account createAccountRequest(UserRepresentation user){
-        CvuAliasGenerator cvuAliasGenerator = new CvuAliasGenerator();
-        String alias = cvuAliasGenerator.getAlias();
-        String cvu = cvuAliasGenerator.getCvu();
+    private AccountRequest createAccountRequest(UserRepresentation user){
         String name = user.getFirstName() + " " + user.getLastName();
-        Account account = new  Account();
-        account.setName(name);
-        account.setCvu(cvu);
-        account.setBalance(0);
-        account.setAlias(alias);
-        account.setUserId(user.getId());
-        return  account;
+        AccountRequest accountRequest = new AccountRequest(name,user.getId());
+        return  accountRequest;
     }
+
     private void deleteUSer(String userId) {
+        keycloak.realm(realm).users().get(userId).logout();
             keycloak.realm(realm).users().get(userId).remove();
 
     }
 
-    private ResponseEntity<Map<String, Object>> crearAccount(Account accountRequest, String accessToken, CreateUser createUser, String id) {
+    private ResponseEntity<Map<String, Object>> crearAccount(AccountRequest accountRequest, String accessToken, CreateUser createUser, String id) {
         
         try{
 
-            ResponseEntity<?> account = accountFeignClient.createAccount(accountRequest,"Bearer " + accessToken);
-            CreateUserDto userDto = new CreateUserDto(createUser.getFirstname(),createUser.getLastname(),createUser.getDni(),createUser.getEmail(),createUser.getPhone(),accountRequest.getCvu(),accountRequest.getAlias(),accountRequest.getUserId());
+            ResponseEntity<Account> account = accountFeignClient.createAccount(accountRequest,"Bearer " + accessToken);
+            Account accountResponse = account.getBody();
+            CreateUserDto userDto = new CreateUserDto(createUser.getFirstname(),createUser.getLastname(),createUser.getDni(),createUser.getEmail(),createUser.getPhone(),accountResponse.getCvu(),accountResponse.getAlias(),accountRequest.getUserId());
             return ResponseEntity.ok().body(Map.of("user",userDto,"acccess_token",accessToken));
 
         }catch (HttpClientErrorException e){
@@ -203,10 +199,7 @@ public class keycloakRepository implements userRepository {
 
         }
 
-       
     }
-        
-
 
 }
 

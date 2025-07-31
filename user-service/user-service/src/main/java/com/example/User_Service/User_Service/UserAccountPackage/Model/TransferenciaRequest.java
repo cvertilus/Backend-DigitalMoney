@@ -1,4 +1,4 @@
-package com.example.User_Service.User_Service.UserActivityPackage.Model;
+package com.example.User_Service.User_Service.UserAccountPackage.Model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Schema(
         description = "Transfer model representing a transfer activity in the system. " +
                 "Contains details such as origin, destination, and quantity of the transfer.")
-public class Transfer {
+public class TransferenciaRequest {
     private  String origin;
     private String destino;
     private Long cantitdad;

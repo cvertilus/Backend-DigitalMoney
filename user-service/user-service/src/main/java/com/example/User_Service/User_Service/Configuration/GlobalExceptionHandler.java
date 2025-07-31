@@ -21,7 +21,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<String> handleFeignException(FeignException e) {
+        if (e.status() == 500) {
+            String message = e.getMessage();
+            // Puedes parsear aquí si es JSON, o buscar el texto que te interese
+            if (message.contains("duplicate key value")) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Conflicto: el recurso ya existe");
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Comuníquese con el Admin, error interno");
+                .body(e.getMessage());
     }
 }

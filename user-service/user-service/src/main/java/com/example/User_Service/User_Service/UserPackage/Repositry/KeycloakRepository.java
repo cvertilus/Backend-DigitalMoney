@@ -17,6 +17,7 @@ public class KeycloakRepository implements UserRepsository{
 
     @Autowired
     private Keycloak keycloak;
+
     @Value("${app.keycloak.realm}")
     String realm;
 
@@ -34,17 +35,15 @@ public class KeycloakRepository implements UserRepsository{
     }
 
     private User getUSer(UserRepresentation userRepresentation) {
-        User user = User.builder()
+
+        return User.builder()
                 .id(userRepresentation.getId())
                 .email(userRepresentation.getEmail())
                 .firstname(userRepresentation.getFirstName())
                 .lastname(userRepresentation.getLastName())
                 .username(userRepresentation.getUsername())
+                .datos( userRepresentation.getAttributes())
                 .build();
-        Map<String, List<String>> attributes = userRepresentation.getAttributes();
-        user.setDni(attributes.get("dni").get(0));
-        user.setTelefono(attributes.get("phone").get(0));
-        return user;
     }
 
     @Override

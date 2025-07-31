@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalServerError (Exception e){
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .error("500")
+                .error(e.getMessage())
                 .status(500)
                 .message("Contact with the developer")
                 .build();

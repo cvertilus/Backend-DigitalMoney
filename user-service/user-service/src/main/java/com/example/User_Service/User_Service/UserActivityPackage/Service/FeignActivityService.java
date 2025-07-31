@@ -1,10 +1,12 @@
 package com.example.User_Service.User_Service.UserActivityPackage.Service;
 
+import com.example.User_Service.User_Service.UserAccountPackage.Model.TransferenciaRequest;
 import com.example.User_Service.User_Service.UserAccountPackage.Repository.FeignClientAccount;
 import com.example.User_Service.User_Service.UserActivityPackage.Model.Activity;
-import com.example.User_Service.User_Service.UserActivityPackage.Model.Transfer;
+import com.example.User_Service.User_Service.UserActivityPackage.Model.ActivityRequest;
 import com.example.User_Service.User_Service.UserActivityPackage.Repository.FeignClientAcitivity;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,15 @@ public class FeignActivityService {
     public ResponseEntity<Activity> getActivityById (String activityId){
         return  feignClientAcitivity.getActivityById(activityId);
     }
-    public ResponseEntity<Activity> guardarActivity (String userId, Activity activity){
-        Transfer transfer =  Transfer.builder()
-                .cantitdad(activity.getAmount())
-                .origin(activity.getOrigin())
-                .destino(activity.getDestination())
-                .build();
-        ResponseEntity  r = feignClientAccount.transferActivity(transfer);
-        if(r.getStatusCode().is2xxSuccessful()) return feignClientAcitivity.guardarActivity(userId, activity);
+    public ResponseEntity<Activity> crearActivity (String userId, ActivityRequest activityRequest){
+        TransferenciaRequest transferenciaRequest = new TransferenciaRequest();
+        transferenciaRequest.setCantitdad(activityRequest.getAmount());
+        transferenciaRequest.setOrigin(activityRequest.getOrigin());
+        transferenciaRequest.setDestino(activityRequest.getDestination());
+       if (feignClientAccount.transferActivity(transferenciaRequest).getStatusCode().is2xxSuccessful()){
+           return  feignClientAcitivity.CrearActivity(userId, activityRequest);
+       }
+      return  null;
 
-        return ResponseEntity.badRequest().body(null);
     }
 }

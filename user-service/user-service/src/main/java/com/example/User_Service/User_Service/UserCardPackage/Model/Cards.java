@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
         description = "Card model representing a user's card information. " +
                 "Contains details such as card number, expiration date, cardholder name, and CVC.")
 public class Cards {
-    private String id;
+    private String cardId;
     private String expiration;
     private String number;
     private String name;

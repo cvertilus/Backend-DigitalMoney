@@ -39,7 +39,7 @@ public class CardsController {
     @ApiResponse(responseCode = "404", description = "Card not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/{cardId}")
-    public  ResponseEntity<?> getCardByCardId (@PathVariable("cardId") String cardId){
+    public  ResponseEntity<Tarjeta> getCardByCardId (@PathVariable("cardId") String cardId){
         Tarjeta tarjeta = cardsService.getUserCardByIdCard(cardId);
         return ResponseEntity.ok(tarjeta);
     }
@@ -51,7 +51,7 @@ public class CardsController {
     @ApiResponse(responseCode = "404", description = "Card not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @DeleteMapping("/{cardId}")
-    public ResponseEntity<?> deleteCardByCardId(@PathVariable("cardId") String cardId){
+    public ResponseEntity<Tarjeta> deleteCardByCardId(@PathVariable("cardId") String cardId){
         Tarjeta tarjeta = cardsService.deleteUserCardByIdCard(cardId);
         return ResponseEntity.ok(tarjeta);
     }
@@ -63,7 +63,7 @@ public class CardsController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping()
-    public ResponseEntity<?> createCard(@RequestParam("userId") String userId, @RequestBody CardRequest cardRequest){
+    public ResponseEntity<Tarjeta> createCard(@RequestParam("userId") String userId, @RequestBody CardRequest cardRequest){
             return ResponseEntity.ok(cardsService.createCards(userId,cardRequest));
 
     }

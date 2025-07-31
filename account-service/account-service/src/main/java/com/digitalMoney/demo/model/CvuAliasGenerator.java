@@ -1,22 +1,19 @@
-package com.example.login.login_service.model;
+package com.digitalMoney.demo.model;
 
+import org.xml.sax.InputSource;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class CvuAliasGenerator {
-    private static final String FILE_PATH = "login-service (1)/login-service/src/main/resources/alias.txt";
     private static final Random random = new Random();
     private Integer cantidadDePalabras = 3;
     private Integer cantidadDeDigitos=22;
-
-//    public static void main(String[] args) {
-//        Map<String, String> cvuAlias = generarCvuYAlias();
-//        System.out.println("CVU: " + cvuAlias.get("cvu"));
-//        System.out.println("Alias: " + cvuAlias.get("alias"));
-//    }
-
 
     public String getCvu(){
         return  generarCvu();
@@ -44,11 +41,19 @@ public class CvuAliasGenerator {
         return String.join(".", palabras.subList(0, 3)); // Toma las 3 primeras palabras mezcladas
     }
 
-    private static List<String> leerPalabrasDesdeArchivo() {
-        try {
-            return Files.readAllLines(Paths.get(FILE_PATH));
-        } catch (IOException e) {
+    private List<String> leerPalabrasDesdeArchivo() {
+        List<String> palabras = new ArrayList<>();
+        try (
+                InputStream inputStream = getClass().getClassLoader().getResourceAsStream("alias.txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))
+        ) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                palabras.add(linea.trim());
+            }
+        } catch (IOException | NullPointerException e) {
             throw new RuntimeException("Error al leer el archivo de palabras.", e);
         }
+        return palabras;
     }
 }
