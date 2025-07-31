@@ -1,4 +1,5 @@
-package com.example.login.login_service.model;
+package com.digitalMoney.demo;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account {
+    private Long accountId;
     private String userId;
-    private String name;
+    private int balance;
     private String cvu;
     private String alias;
-    private int balance;
-    private Long accountId;
-
+    private String name;
 }

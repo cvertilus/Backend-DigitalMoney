@@ -3,6 +3,9 @@ package com.digitalMoney.demo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
@@ -12,14 +15,11 @@ import jakarta.persistence.*;
         title = "Account",
         requiredProperties = {"userId", "balance", "cvu", "alias", "name"}
 )
-public class Account {
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+@NoArgsConstructor
+@Getter
+
+public class Account {
 
     public String getUserId() {
         return userId;
@@ -61,14 +61,22 @@ public class Account {
         this.name = name;
     }
 
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long accountId;
 
     @Column(nullable = false, unique = true)
     private String userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private int balance;
 
     @Column(nullable = false, unique = true)
@@ -88,5 +96,12 @@ public class Account {
         this.name = name;
     }
 
-
+    public Account(Long accountId, String userId, int balance, String cvu, String alias, String name) {
+        this.accountId = accountId;
+        this.userId = userId;
+        this.balance = balance;
+        this.cvu = cvu;
+        this.alias = alias;
+        this.name = name;
+    }
 }

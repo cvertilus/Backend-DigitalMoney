@@ -2,6 +2,8 @@ package com.digitalMoney.demo.service;
 
 import com.digitalMoney.demo.Repository.AccountRepository;
 import com.digitalMoney.demo.model.Account;
+import com.digitalMoney.demo.model.AccountRequest;
+import com.digitalMoney.demo.model.CvuAliasGenerator;
 import com.digitalMoney.demo.model.TransferRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,10 +26,24 @@ public class AccountService {
             description = "Create a new account",
             example = "Account object with userId, cvu, alias, name, and balance"
     )
-    public Account createAccount (Account account){
-        if(accountRepository.existsByUserId(account.getUserId()))
+    public Account createAccount (AccountRequest request){
+        if(accountRepository.existsByUserId(request.getUserId()))
             throw new IllegalArgumentException("la cuenta ya existe");
-    return  accountRepository.save(account);
+        Account account = createAccountFromRequest(request);
+        return  accountRepository.save(account);
+    }
+
+    private Account createAccountFromRequest(AccountRequest request){
+        CvuAliasGenerator cvuAliasGenerator = new CvuAliasGenerator();
+        String alias = cvuAliasGenerator.getAlias();
+        String cvu = cvuAliasGenerator.getCvu();
+        Account account = new Account();
+        account.setBalance(0);
+        account.setName(request.getName());
+        account.setCvu(cvu);
+        account.setAlias(alias);
+        account.setUserId(request.getUserId());
+        return  account;
     }
 
     @Schema(
@@ -72,8 +88,9 @@ public class AccountService {
     public String createActivity (TransferRequest transferRequest) throws BadRequestException {
         Account accountOrigin = validarAccount(transferRequest.getOrigin());
         Account accountDestino = validarAccount(transferRequest.getDestino());
-        if(accountOrigin == null && accountDestino== null)  throw new BadRequestException("debe exisitir un Account") ;
-        if (accountDestino == null) {
+        if (accountOrigin == null  || accountDestino == null ) throw new EntityNotFoundException("los datos de origen o destino son incorrectos , no Existe la cuenta ");
+        if (transferRequest.getOrigin().equals(transferRequest.getDestino())) {
+            // Si el origen y destino son iguales, se trata de un depósito
            accountOrigin =  createDepostito(accountOrigin , transferRequest.getCantitad());
            return "Ok";
         }

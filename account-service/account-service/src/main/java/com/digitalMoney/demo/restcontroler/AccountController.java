@@ -1,6 +1,7 @@
 package com.digitalMoney.demo.restcontroler;
 
 import com.digitalMoney.demo.model.Account;
+import com.digitalMoney.demo.model.AccountRequest;
 import com.digitalMoney.demo.model.TransferRequest;
 import com.digitalMoney.demo.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +25,7 @@ public class AccountController {
     @ApiResponse(responseCode = "200", description = "Account retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Account not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    @GetMapping("{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<Account> getAccount(@PathVariable String userId){
             Account account = accountService.getAccount(userId);
             return ResponseEntity.ok(account);
@@ -37,9 +38,9 @@ public class AccountController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping()
-    public ResponseEntity<Account> createAccount(@RequestBody Account account){
-            Account account1 = accountService.createAccount(account);
-            return ResponseEntity.ok(account1);
+    public ResponseEntity<Account> createAccount(@RequestBody AccountRequest accountRequest){
+            Account account = accountService.createAccount(accountRequest);
+            return ResponseEntity.ok(account);
     }
 
 
@@ -48,7 +49,7 @@ public class AccountController {
     @ApiResponse(responseCode = "200", description = "Account updated successfully")
     @ApiResponse(responseCode = "404", description = "Account not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    @PatchMapping("{saccountId}")
+    @PutMapping("/{accountId}")
     public ResponseEntity<Account> updateAccount (@PathVariable Long accountId , @RequestBody Account account){
             Account account1 = accountService.updateAccount(accountId,account);
             return ResponseEntity.ok(account1);
