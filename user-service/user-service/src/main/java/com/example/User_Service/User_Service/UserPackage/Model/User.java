@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,7 +22,8 @@ public class User {
     private String lastname;
     private String email;
     private String telefono;
+    private Map<String , List<String>> datos;
     private String username;
-    private String dni;
+
 
 }

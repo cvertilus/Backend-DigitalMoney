@@ -14,8 +14,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired(required = true)
+
     private UserService userService;
+    public UserController (UserService userService){
+        this.userService = userService;
+    }
 
     @Operation(summary = "Get user by userId",
             description = "Retrieve a user using the userId associated with it. "
@@ -38,7 +41,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User retrieved successfully")
     @ApiResponse(responseCode = "404", description = "User not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity <?> getUserByUsername (@RequestParam("username") String username){
         User user = userService.getUserByUsername(username);
         if(user == null) return  ResponseEntity.ok("No exite el usuario");
