@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    @Autowired(required = true)
-    private final UserRepsository userRepsository;
-
-    public UserService(UserRepsository userRepsository) {
+    private UserRepsository userRepsository;
+    public  UserService (UserRepsository userRepsository){
         this.userRepsository = userRepsository;
     }
+
+
 
     public User getUserById (String id) {
         return userRepsository.getUserById(id);
