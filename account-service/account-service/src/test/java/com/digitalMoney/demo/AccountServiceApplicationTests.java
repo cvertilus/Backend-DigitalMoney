@@ -120,7 +120,7 @@ class AccountServiceApplicationTests  extends  BaseTest{
 	public void crearTransferencia404EntityNotFoundTest() {
 		String requestBody = """
 				{
-					"cantitad": 100,
+					"cantidad": 100,
 					"origin":"newAlias21",
 					"destino": "newAlias21"
 				}
@@ -185,7 +185,7 @@ class AccountServiceApplicationTests  extends  BaseTest{
 	public void crearTransferenciaTest2() {
 		String requestBody = """
 				{
-					"cantitad": 100,
+					"cantidad": 100,
 					"origin":"newAlias2",
 					"destino": "newAlias"
 				}

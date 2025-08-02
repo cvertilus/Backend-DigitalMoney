@@ -56,7 +56,9 @@ class ActivitiesServiceApplicationTests  extends BaseTest{
 					    "amount": 500,
 						"type": "Deposit",
 						"description": "Test deposit activity",
-						"name": "Test User"
+						"name": "Test User",
+						"origin": "user-oo1",
+						"destination": "user-oo2"
 					}
 				""";
 
