@@ -63,7 +63,7 @@ El sistema está conformado por los siguientes servicios:
 1. Clona el repositorio:
 
    ```bash
-   git clone <REPOSITORY_URL>
+   git clone https://github.com/cvertilus/Backend-DigitalMoney.git
    cd Backend-DigitalMoney
    ```
 
