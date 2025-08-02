@@ -21,7 +21,7 @@ public class FeignClientService {
         return feignClientAccount.updateAccount(accountId,account);
     }
 
-    public ResponseEntity<String> crearTransfernecia (String userId, TransferenciaRequest transferenciaRequest){
+    public ResponseEntity<String> crearTransferencia (String userId, TransferenciaRequest transferenciaRequest){
         return feignClientAccount.transferActivity(transferenciaRequest);
     }
 

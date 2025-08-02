@@ -6,12 +6,15 @@ import com.example.User_Service.User_Service.UserAccountPackage.Model.Transferen
 import com.example.User_Service.User_Service.UserAccountPackage.Service.FeignClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
+@Validated
 public class FeingAccountController {
     @Autowired
     private FeignClientService feignClientService;
@@ -34,7 +37,7 @@ public class FeingAccountController {
                     "The request body should contain the updated account information."
     )
     @PutMapping("/{userId}/accounts/{accountId}")
-    public ResponseEntity<Account> updateAccount (@PathVariable("accountId") Long accountId, @RequestBody Account account){
+    public ResponseEntity<Account> updateAccount (@PathVariable("accountId") Long accountId,@Valid @RequestBody Account account){
         return feignClientService.updateAccount(accountId,account);
     }
 

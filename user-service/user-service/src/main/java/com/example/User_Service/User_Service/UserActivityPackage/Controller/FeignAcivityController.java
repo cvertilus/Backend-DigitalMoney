@@ -5,14 +5,17 @@ import com.example.User_Service.User_Service.UserActivityPackage.Model.ActivityR
 import com.example.User_Service.User_Service.UserActivityPackage.Service.FeignActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/users")
 public class FeignAcivityController {
 
@@ -49,7 +52,7 @@ public class FeignAcivityController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping("/{userId}/activities")
-    public ResponseEntity<Activity> createActivity (@PathVariable("userId") String userId, @RequestBody ActivityRequest activityRequest){
+    public ResponseEntity<Activity> createActivity (@PathVariable("userId") String userId, @Valid @RequestBody ActivityRequest activityRequest){
         return feignActivityService.crearActivity(userId, activityRequest);
     }
 

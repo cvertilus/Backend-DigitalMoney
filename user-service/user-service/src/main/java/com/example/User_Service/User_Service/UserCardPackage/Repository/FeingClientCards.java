@@ -1,6 +1,7 @@
 package com.example.User_Service.User_Service.UserCardPackage.Repository;
 
 import com.example.User_Service.User_Service.Configuration.FeignClientConfiguration;
+import com.example.User_Service.User_Service.UserCardPackage.Model.CardRequest;
 import com.example.User_Service.User_Service.UserCardPackage.Model.Cards;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public interface FeingClientCards {
     ResponseEntity<Cards> deleteCardByIdCard (@PathVariable("id") String id);
 
     @RequestMapping(method = RequestMethod.POST, value = "/cards")
-    ResponseEntity<Cards> createCards (@RequestParam("userId") String userId,@RequestBody Cards cards);
+    ResponseEntity<Cards> createCards (@RequestParam("userId") String userId,@RequestBody CardRequest cardRequest);
 
 
 

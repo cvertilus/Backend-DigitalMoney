@@ -5,15 +5,18 @@ import com.example.Activities_Service.Model.ActivityRequest;
 import com.example.Activities_Service.Service.ActivityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/activities")
+@Validated
 public class ActivityController {
     @Autowired
     private ActivityService activityService;
@@ -50,7 +53,7 @@ public class ActivityController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping("/{userId}")
-    public ResponseEntity<Activity> createActivity(@RequestBody ActivityRequest activityRequest,@PathVariable("userId") String userId ){
+    public ResponseEntity<Activity> createActivity(@Valid @RequestBody ActivityRequest activityRequest, @PathVariable("userId") String userId ){
         return ResponseEntity.ok(activityService.saveActivity(userId,activityRequest));
     }
 }

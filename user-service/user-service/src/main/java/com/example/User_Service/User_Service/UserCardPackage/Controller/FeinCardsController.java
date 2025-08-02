@@ -1,15 +1,19 @@
 package com.example.User_Service.User_Service.UserCardPackage.Controller;
 
+import com.example.User_Service.User_Service.UserCardPackage.Model.CardRequest;
 import com.example.User_Service.User_Service.UserCardPackage.Model.Cards;
 import com.example.User_Service.User_Service.UserCardPackage.Service.FeignCardsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping ("/users")
 public class FeinCardsController {
     private final FeignCardsService feignCardsService;
@@ -49,8 +53,8 @@ public class FeinCardsController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping ("/{userId}/cards")
-    public ResponseEntity<Cards> createCards (@PathVariable("userId") String userId , @RequestBody Cards cards){
-        return feignCardsService.createCard(userId, cards);
+    public ResponseEntity<Cards> createCards (@PathVariable("userId") String userId ,@Valid @RequestBody CardRequest cardRequest){
+        return feignCardsService.createCard(userId, cardRequest);
     }
 
 

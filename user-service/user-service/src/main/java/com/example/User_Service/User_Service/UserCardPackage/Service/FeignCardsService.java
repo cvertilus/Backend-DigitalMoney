@@ -1,5 +1,6 @@
 package com.example.User_Service.User_Service.UserCardPackage.Service;
 
+import com.example.User_Service.User_Service.UserCardPackage.Model.CardRequest;
 import com.example.User_Service.User_Service.UserCardPackage.Model.Cards;
 import com.example.User_Service.User_Service.UserCardPackage.Repository.FeingClientCards;
 
@@ -29,8 +30,8 @@ public class FeignCardsService {
         return feingClientCards.deleteCardByIdCard(cardId);
     }
 
-    public ResponseEntity<Cards> createCard(String userId, Cards cards){
-        return feingClientCards.createCards(userId,cards);
+    public ResponseEntity<Cards> createCard(String userId, CardRequest cardRequest) {
+        return feingClientCards.createCards(userId,cardRequest);
     }
 
 

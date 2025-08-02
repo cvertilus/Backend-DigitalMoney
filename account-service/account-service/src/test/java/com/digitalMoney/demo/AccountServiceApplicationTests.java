@@ -98,7 +98,7 @@ class AccountServiceApplicationTests  extends  BaseTest{
 	public void crearTransferenciaTest() {
 		String requestBody = """
 				{
-					"cantitad": 100,
+					"cantidad": 100,
 					"origin":"newAlias",
 					"destino": "newAlias"
 				}

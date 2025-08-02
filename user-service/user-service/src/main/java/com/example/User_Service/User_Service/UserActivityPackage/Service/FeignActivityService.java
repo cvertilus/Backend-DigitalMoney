@@ -1,7 +1,8 @@
 package com.example.User_Service.User_Service.UserActivityPackage.Service;
 
 import com.example.User_Service.User_Service.UserAccountPackage.Model.TransferenciaRequest;
-import com.example.User_Service.User_Service.UserAccountPackage.Repository.FeignClientAccount;
+import com.example.User_Service.User_Service.UserAccountPackage.Service.FeignClientService;
+
 import com.example.User_Service.User_Service.UserActivityPackage.Model.Activity;
 import com.example.User_Service.User_Service.UserActivityPackage.Model.ActivityRequest;
 import com.example.User_Service.User_Service.UserActivityPackage.Repository.FeignClientAcitivity;
@@ -19,7 +20,7 @@ public class FeignActivityService {
     private FeignClientAcitivity feignClientAcitivity;
 
     @Autowired
-    private FeignClientAccount feignClientAccount;
+    private FeignClientService feignClientService;
 
     public ResponseEntity<List<Activity>> getUserActivity (String userId){
         return feignClientAcitivity.getUserActivities(userId);
@@ -30,13 +31,15 @@ public class FeignActivityService {
     }
     public ResponseEntity<Activity> crearActivity (String userId, ActivityRequest activityRequest){
         TransferenciaRequest transferenciaRequest = new TransferenciaRequest();
-        transferenciaRequest.setCantitdad(activityRequest.getAmount());
+        transferenciaRequest.setCantidad(activityRequest.getAmount());
         transferenciaRequest.setOrigin(activityRequest.getOrigin());
         transferenciaRequest.setDestino(activityRequest.getDestination());
-       if (feignClientAccount.transferActivity(transferenciaRequest).getStatusCode().is2xxSuccessful()){
+        ResponseEntity<String> response = feignClientService.crearTransferencia(userId,transferenciaRequest);
+       if (response.getStatusCode().is2xxSuccessful()){
            return  feignClientAcitivity.CrearActivity(userId, activityRequest);
        }
-      return  null;
+
+      return  ResponseEntity.badRequest().body(null);
 
     }
 }

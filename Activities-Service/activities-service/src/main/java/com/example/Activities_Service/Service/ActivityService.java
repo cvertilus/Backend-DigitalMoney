@@ -21,11 +21,10 @@ public class ActivityService {
                 .name(activityRequest.getName())
                 .userId(userId)
                 .description(activityRequest.getDescription())
+                .origin(activityRequest.getOrigin())
+                .destination(activityRequest.getDestination())
                 .build();
-       if (activityRequest.getType().equals("Transfer")){
-           activity.setOrigin(activityRequest.getOrigin());
-           activity.setDestination(activityRequest.getDestination());
-       }
+
         return activityRepository.save(activity);
     }
 

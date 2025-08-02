@@ -6,13 +6,16 @@ import com.digitalMoney.demo.model.TransferRequest;
 import com.digitalMoney.demo.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/accounts")
+@Validated
 public class AccountController {
     @Autowired
     private AccountService accountService;
@@ -38,7 +41,7 @@ public class AccountController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping()
-    public ResponseEntity<Account> createAccount(@RequestBody AccountRequest accountRequest){
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest accountRequest){
             Account account = accountService.createAccount(accountRequest);
             return ResponseEntity.ok(account);
     }
@@ -50,7 +53,7 @@ public class AccountController {
     @ApiResponse(responseCode = "404", description = "Account not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PutMapping("/{accountId}")
-    public ResponseEntity<Account> updateAccount (@PathVariable Long accountId , @RequestBody Account account){
+    public ResponseEntity<Account> updateAccount (@PathVariable Long accountId ,@Valid @RequestBody Account account){
             Account account1 = accountService.updateAccount(accountId,account);
             return ResponseEntity.ok(account1);
 
@@ -62,7 +65,7 @@ public class AccountController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid transfer details")
     @ApiResponse(responseCode = "404", description = "Account not found")
     @PostMapping("/transfer")
-    public ResponseEntity<String> transfer (@RequestBody TransferRequest transferRequest) throws BadRequestException {
+    public ResponseEntity<String> transfer (@Valid @RequestBody TransferRequest transferRequest) throws BadRequestException {
         String resultado = accountService.createActivity(transferRequest);
         return ResponseEntity.ok().body("exitoso");
     }

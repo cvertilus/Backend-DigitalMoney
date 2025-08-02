@@ -1,15 +1,15 @@
 services:
-#  postgres:
-#    image: postgres:13
-#    container_name: postgres
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_DB: postgres
-#    ports:
-#      - "5432:5432"
-#    volumes:
-#      - pg_data:/var/lib/postgresql/data
+  db:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres1234
+      POSTGRES_DB: digitalbank
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data_db:/var/lib/postgresql/data
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.2
@@ -25,14 +25,14 @@ services:
       - start-dev
     volumes:
       - ./data/keycloak:/opt/keycloak/data
-
+#
   eureka-server:
     build: eureka-server/eureka-server
     mem_limit: 512m
     container_name: eureka-server
     ports:
       - "8761:8761"
-#
+##
   config-server:
     build: config-server/
     mem_limit: 512m
@@ -46,7 +46,7 @@ services:
       retries: 3
     depends_on:
       - eureka-server
-#
+##
   api-gateway:
     build: api-gateway/api-gateway
     mem_limit: 512m
@@ -56,7 +56,7 @@ services:
     depends_on:
        config-server:
             condition: service_healthy
-#
+##
   login-service:
     build: login-service/login-service/
     mem_limit: 512m
@@ -65,6 +65,7 @@ services:
       - "8083:8083"
     depends_on:
       - api-gateway
+      - keycloak
 
   account-service:
     build: account-service/account-service/
@@ -74,24 +75,29 @@ services:
       - "8084:8084"
     depends_on:
       - api-gateway
-
+      - db
 #
-#  activities-service:
-#    build: Activities-Service/activities-service/
-#    mem_limit: 512m
-#    ports:
-#      - "8087:8080"
-#    depends_on:
-#      - api-gateway
-#
-#  card-service:
-#    build: Cards-service/cards-service/
-#    mem_limit: 512m
-#    ports:
-#      - "8085:8080"
-#    depends_on:
-#      - api-gateway
-#
+##
+  activities-service:
+    build: Activities-Service/activities-service/
+    mem_limit: 512m
+    container_name: activites-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - api-gateway
+      - db
+##
+  cards-service:
+    build: Cards-service/cards-service/
+    mem_limit: 512m
+    container_name: cards-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - api-gateway
+      - db
+##
   user-service:
     build: user-service/user-service/
     mem_limit: 512m

@@ -5,9 +5,11 @@ import com.example.Cards_Service.Model.Tarjeta;
 import com.example.Cards_Service.Service.CardsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cards")
+@Validated
 public class CardsController {
 
     @Autowired
@@ -51,7 +54,7 @@ public class CardsController {
     @ApiResponse(responseCode = "404", description = "Card not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @DeleteMapping("/{cardId}")
-    public ResponseEntity<Tarjeta> deleteCardByCardId(@PathVariable("cardId") String cardId){
+    public ResponseEntity<Tarjeta> deleteCardByCardId( @PathVariable("cardId") String cardId){
         Tarjeta tarjeta = cardsService.deleteUserCardByIdCard(cardId);
         return ResponseEntity.ok(tarjeta);
     }
@@ -63,7 +66,7 @@ public class CardsController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping()
-    public ResponseEntity<Tarjeta> createCard(@RequestParam("userId") String userId, @RequestBody CardRequest cardRequest){
+    public ResponseEntity<Tarjeta> createCard(@RequestParam("userId") String userId, @Valid @RequestBody CardRequest cardRequest){
             return ResponseEntity.ok(cardsService.createCards(userId,cardRequest));
 
     }

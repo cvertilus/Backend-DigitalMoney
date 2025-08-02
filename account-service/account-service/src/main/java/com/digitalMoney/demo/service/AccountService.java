@@ -89,12 +89,12 @@ public class AccountService {
         Account accountOrigin = validarAccount(transferRequest.getOrigin());
         Account accountDestino = validarAccount(transferRequest.getDestino());
         if (accountOrigin == null  || accountDestino == null ) throw new EntityNotFoundException("los datos de origen o destino son incorrectos , no Existe la cuenta ");
-        if (transferRequest.getOrigin().equals(transferRequest.getDestino())) {
+        if (accountOrigin.getName().equals(accountDestino.getName())) {
             // Si el origen y destino son iguales, se trata de un depósito
-           accountOrigin =  createDepostito(accountOrigin , transferRequest.getCantitad());
+           accountOrigin =  createDepostito(accountOrigin , transferRequest.getCantidad());
            return "Ok";
         }
-        return createTransfer(accountOrigin,accountDestino,transferRequest.getCantitad());
+        return createTransfer(accountOrigin,accountDestino,transferRequest.getCantidad());
 
     }
 
@@ -107,8 +107,9 @@ public class AccountService {
 
     private Account createDepostito(Account accountOrigin, int cantitad) {
         int cantidadActual = accountOrigin.getBalance();
-        accountOrigin.setBalance(cantidadActual + cantitad);
-        return accountRepository.save(accountOrigin);
+        Account account = accountOrigin;
+        account.setBalance(cantidadActual + cantitad);
+        return accountRepository.save(account);
 
     }
 

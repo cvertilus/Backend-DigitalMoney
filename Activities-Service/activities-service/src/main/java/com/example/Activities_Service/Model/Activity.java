@@ -36,7 +36,7 @@ public class Activity {
     @Column(nullable = false)
     private double amount;
 
-   @CreationTimestamp
+    @CreationTimestamp
     private LocalDateTime date;
 
     @Column(nullable = false)
