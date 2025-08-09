@@ -6,12 +6,19 @@ import com.digitalMoney.demo.model.TransferRequest;
 import com.digitalMoney.demo.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.oauth2.jwt.Jwt;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts")
@@ -19,6 +26,16 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
     @Autowired
     private AccountService accountService;
+
+
+    private void validarUserId(String userId ,String userIdDesdetoken) {
+        if(userIdDesdetoken == null ) {
+           return;
+        }
+        if (!userIdDesdetoken.equals(userId)) {
+            throw new AccessDeniedException("El userId no tiene acceso");
+        }
+    }
 
     @Operation(summary = "Get account by userId"
     , description = "Retrieve an account using the userId associated with it."
@@ -29,7 +46,11 @@ public class AccountController {
     @ApiResponse(responseCode = "404", description = "Account not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/{userId}")
-    public ResponseEntity<Account> getAccount(@PathVariable String userId){
+    public ResponseEntity<Account> getAccount(@PathVariable String userId,@AuthenticationPrincipal Jwt jwt) {
+            if(jwt != null) {
+                validarUserId(userId, jwt.getSubject());
+            }
+
             Account account = accountService.getAccount(userId);
             return ResponseEntity.ok(account);
     }
@@ -41,7 +62,7 @@ public class AccountController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid input data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PostMapping()
-    public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest accountRequest){
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest accountRequest,@AuthenticationPrincipal Jwt jwt){
             Account account = accountService.createAccount(accountRequest);
             return ResponseEntity.ok(account);
     }
@@ -53,7 +74,9 @@ public class AccountController {
     @ApiResponse(responseCode = "404", description = "Account not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @PutMapping("/{accountId}")
-    public ResponseEntity<Account> updateAccount (@PathVariable Long accountId ,@Valid @RequestBody Account account){
+    public ResponseEntity<Account> updateAccount (@PathVariable Long accountId ,@Valid @RequestBody Account account,@AuthenticationPrincipal Jwt jwt){
+            validarUserId(account.getUserId(),
+                    jwt != null ? jwt.getSubject() : null);
             Account account1 = accountService.updateAccount(accountId,account);
             return ResponseEntity.ok(account1);
 
@@ -65,11 +88,23 @@ public class AccountController {
     @ApiResponse(responseCode = "400", description = "Bad request, invalid transfer details")
     @ApiResponse(responseCode = "404", description = "Account not found")
     @PostMapping("/transfer")
-    public ResponseEntity<String> transfer (@Valid @RequestBody TransferRequest transferRequest) throws BadRequestException {
+    public ResponseEntity<String> transfer (@Valid @RequestBody TransferRequest transferRequest,@AuthenticationPrincipal Jwt jwt) throws BadRequestException {
+       validarTransferRequest(transferRequest,jwt);
         String resultado = accountService.createActivity(transferRequest);
         return ResponseEntity.ok().body("exitoso");
     }
 
-
+    private void validarTransferRequest(TransferRequest transferRequest, Jwt jwt) {
+        Optional<Account>  account = accountService.getAccountByCvuOrAlias(transferRequest.getOrigin(),transferRequest.getOrigin());
+      if(account.isPresent()) {
+            String userId = account.get().getUserId();
+            if(jwt != null) {
+                validarUserId(userId, jwt.getSubject());
+            }
+            return;
+        } else {
+            throw new EntityNotFoundException("Cuenta origen no encontrada");
+      }
+    }
 
 }

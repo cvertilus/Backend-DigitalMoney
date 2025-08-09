@@ -24,6 +24,12 @@ public interface FeignClientAcitivity {
     @RequestMapping(method = RequestMethod.GET, value = "/activities/{activityId}")
     ResponseEntity<Activity> getActivityById (@PathVariable("activityId") String activityId);
 
+    @RequestMapping(method = RequestMethod.GET, value = "/activities/{userId}/rango-fechas")
+    ResponseEntity<List<Activity>> getActivityByDateRange(@RequestParam("inicio") String inicio,
+                                                          @RequestParam("fin") String fin,
+                                                          @PathVariable("userId") String userId);
 
 
+    @RequestMapping(method = RequestMethod.GET, value = "/activities/{userId}/pdf")
+    ResponseEntity<byte[]> getActivityLast10(@PathVariable("userId") String userId);
 }

@@ -9,6 +9,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +27,15 @@ public class CardsController {
     @Autowired
     private CardsService cardsService;
 
+    private void validarUserId(String userId ,String userIdDesdetoken) {
+        if(userIdDesdetoken == null ) {
+            return;
+        }
+        if (!userIdDesdetoken.equals(userId)) {
+            throw new AccessDeniedException("El userId no tiene acceso");
+        }
+    }
+
 
     @Operation(summary = "Get card by userId",
             description = "Retrieve a list of cards associated with a specific userId. If no cards are found, an empty list will be returned."
@@ -30,7 +43,8 @@ public class CardsController {
     @ApiResponse(responseCode = "200", description = "Cards retrieved successfully")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping()
-    public ResponseEntity<List<Tarjeta>> getCardByUserId(@RequestParam("userId") String userId){
+    public ResponseEntity<List<Tarjeta>> getCardByUserId(@RequestParam("userId") String userId,@AuthenticationPrincipal Jwt jwt){
+        validarUserId(userId, jwt != null ? jwt.getSubject() : null);
         List<Tarjeta> tarjetas = cardsService.getUserCardByUserId(userId);
         return ResponseEntity.ok(tarjetas);
     }
@@ -42,8 +56,9 @@ public class CardsController {
     @ApiResponse(responseCode = "404", description = "Card not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/{cardId}")
-    public  ResponseEntity<Tarjeta> getCardByCardId (@PathVariable("cardId") String cardId){
+    public  ResponseEntity<Tarjeta> getCardByCardId (@PathVariable("cardId") String cardId,@AuthenticationPrincipal Jwt jwt){
         Tarjeta tarjeta = cardsService.getUserCardByIdCard(cardId);
+        validarUserId(tarjeta.getUserId(), jwt != null ? jwt.getSubject() : null);
         return ResponseEntity.ok(tarjeta);
     }
 
@@ -54,8 +69,10 @@ public class CardsController {
     @ApiResponse(responseCode = "404", description = "Card not found")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @DeleteMapping("/{cardId}")
-    public ResponseEntity<Tarjeta> deleteCardByCardId( @PathVariable("cardId") String cardId){
-        Tarjeta tarjeta = cardsService.deleteUserCardByIdCard(cardId);
+    public ResponseEntity<Tarjeta> deleteCardByCardId( @PathVariable("cardId") String cardId,@AuthenticationPrincipal Jwt jwt){
+        Tarjeta tarjeta = cardsService.getUserCardByIdCard(cardId);
+        validarUserId(tarjeta.getUserId(), jwt != null ? jwt.getSubject() : null);
+        tarjeta = cardsService.deleteUserCardByIdCard(cardId);
         return ResponseEntity.ok(tarjeta);
     }
 

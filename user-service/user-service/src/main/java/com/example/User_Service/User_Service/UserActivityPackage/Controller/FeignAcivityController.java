@@ -56,4 +56,26 @@ public class FeignAcivityController {
         return feignActivityService.crearActivity(userId, activityRequest);
     }
 
+    @Operation(summary = "Get activities by date range for a user",
+            description = "Retrieve all activities for a user within a specified date range. " +
+                    "If no activities are found, an empty list will be returned.")
+    @ApiResponse(responseCode = "200", description = "Activities retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "No activities found for the user")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @GetMapping("/{userId}/activities/rango-fechas")
+    public ResponseEntity<List<Activity>> getActivityByDateRange(
+            @PathVariable("userId") String userId,
+            @RequestParam("inicio") String inicio,
+            @RequestParam("fin") String fin) {
+        return feignActivityService.getActivityByDateRange(inicio, fin, userId);
+    }
+
+    @Operation(summary = "Get activities as a PDF for a user",
+            description = "Retrieve all activities for a user and return them as a PDF file.")
+    @ApiResponse(responseCode = "200", description = "PDF file generated successfully")
+    @ApiResponse(responseCode = "404", description = "No activities found for the user")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @GetMapping("/{userId}/activities/pdf")
+    public ResponseEntity<byte[]> getActivitiesAsPdf(@PathVariable("userId") String userId) {
+        return feignActivityService.getActivityLast10(userId); }
 }

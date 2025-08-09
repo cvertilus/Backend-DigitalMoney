@@ -15,12 +15,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FeignException.NotFound.class)
     public ResponseEntity<String> handleNotFound(FeignException.NotFound e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existe");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(FeignException.BadRequest.class)
     public ResponseEntity<String> handleBadRequest(FeignException.BadRequest e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitud Incorrecta");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(FeignException.Forbidden.class)
+    public ResponseEntity<String> handleForbidden (FeignException.Forbidden ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+
     }
 
     @ExceptionHandler(FeignException.class)

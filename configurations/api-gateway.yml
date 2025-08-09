@@ -24,6 +24,27 @@ spring:
             - Path=/users/**
           filters:
             - TokenRelay
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/accounts/**
+          filters:
+            - TokenRelay
+            - StripPrefix=1
+        - id: activities-service
+          uri: lb://activities-service
+          predicates:
+            - Path=/activities/**
+          filters:
+            - TokenRelay
+            - StripPrefix=1
+        - id: cards-service
+          uri: lb://cards-service
+          predicates:
+              - Path=/cards/**
+          filters:
+               - TokenRelay
+               - StripPrefix=1
 
   security:
     oauth2:

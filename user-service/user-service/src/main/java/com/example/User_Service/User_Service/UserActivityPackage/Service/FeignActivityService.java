@@ -42,4 +42,12 @@ public class FeignActivityService {
       return  ResponseEntity.badRequest().body(null);
 
     }
+
+    public ResponseEntity<List<Activity>> getActivityByDateRange (String inicio, String fin, String userId) {
+        return feignClientAcitivity.getActivityByDateRange(inicio, fin, userId);
+    }
+
+    public ResponseEntity<byte[]> getActivityLast10(String userId) {
+        return feignClientAcitivity.getActivityLast10(userId);
+    }
 }

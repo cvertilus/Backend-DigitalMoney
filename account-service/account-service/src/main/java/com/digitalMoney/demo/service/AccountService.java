@@ -8,7 +8,7 @@ import com.digitalMoney.demo.model.TransferRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
 
-import jakarta.ws.rs.BadRequestException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,10 +85,10 @@ public class AccountService {
             description = "Create a transfer or deposit activity",
             example = "String indicating the result of the operation"
     )
-    public String createActivity (TransferRequest transferRequest) throws BadRequestException {
+    public String createActivity (TransferRequest transferRequest){
         Account accountOrigin = validarAccount(transferRequest.getOrigin());
         Account accountDestino = validarAccount(transferRequest.getDestino());
-        if (accountOrigin == null  || accountDestino == null ) throw new EntityNotFoundException("los datos de origen o destino son incorrectos , no Existe la cuenta ");
+        if (accountDestino == null ) throw new EntityNotFoundException("los datos de  destino son incorrectos , no Existe la cuenta ");
         if (accountOrigin.getName().equals(accountDestino.getName())) {
             // Si el origen y destino son iguales, se trata de un depósito
            accountOrigin =  createDepostito(accountOrigin , transferRequest.getCantidad());
@@ -108,6 +108,8 @@ public class AccountService {
     private Account createDepostito(Account accountOrigin, int cantitad) {
         int cantidadActual = accountOrigin.getBalance();
         Account account = accountOrigin;
+        if(cantidadActual + cantitad < 0)
+            throw new IllegalArgumentException("No se puede realizar la transferencia, saldo insuficiente");
         account.setBalance(cantidadActual + cantitad);
         return accountRepository.save(account);
 

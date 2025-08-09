@@ -46,7 +46,10 @@ services:
       retries: 3
     depends_on:
       - eureka-server
-##
+    volumes:
+       - ./configurations:/configurations
+
+  ##
   api-gateway:
     build: api-gateway/api-gateway
     mem_limit: 512m

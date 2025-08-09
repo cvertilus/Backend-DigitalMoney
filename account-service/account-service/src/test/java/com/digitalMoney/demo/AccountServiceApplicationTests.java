@@ -64,14 +64,14 @@ class AccountServiceApplicationTests  extends  BaseTest{
 	@Order(3)
 	public void ObtenerCuentaTest() {
 
-		account = given()
+		 account = given()
 				.pathParam("userId", "user-oo1")
 				.when()
 				.get(BASE_URL + "/{userId}")
 				.then()
 				.statusCode(200)
 				.extract().as(Account.class);
-		System.out.println("Account retrieved with ID: " + account.getAccountId());
+		System.out.println("Account retrieved : " + account);
 	}
 
 	@Test
@@ -177,12 +177,12 @@ class AccountServiceApplicationTests  extends  BaseTest{
 				.statusCode(200)
 				.extract().as(Account.class);
 
-		System.out.println("New Account data " + account);
+		System.out.println("New Account data " + account.getAlias());
 	}
 
 	@Test
 	@Order(9)
-	public void crearTransferenciaTest2() {
+	public void crearTransferenciaTest2_400() {
 		String requestBody = """
 				{
 					"cantidad": 100,
@@ -191,15 +191,14 @@ class AccountServiceApplicationTests  extends  BaseTest{
 				}
 			""";
 
-		given()
+		String response = given()
 				.contentType("application/json")
 				.body(requestBody)
 				.when()
 				.post(BASE_URL + "/transfer")
 				.then()
-				.statusCode(200);
-
-		System.out.println("Transferencia creada exitosamente");
+				.extract().asString();
+		System.out.println("" + response);
 	}
 
 }

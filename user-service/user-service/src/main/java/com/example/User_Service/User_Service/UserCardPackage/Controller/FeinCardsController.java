@@ -3,10 +3,14 @@ package com.example.User_Service.User_Service.UserCardPackage.Controller;
 import com.example.User_Service.User_Service.UserCardPackage.Model.CardRequest;
 import com.example.User_Service.User_Service.UserCardPackage.Model.Cards;
 import com.example.User_Service.User_Service.UserCardPackage.Service.FeignCardsService;
+import com.example.User_Service.User_Service.UserPackage.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
